@@ -1,0 +1,27 @@
+services:
+  cpp-executor:
+    build: .
+    ports:
+      - "127.0.0.1:2000:2000"
+    restart: unless-stopped
+
+    # ── Resource limits ────────────────────────────────────────────────────────
+    mem_limit: 128m
+    memswap_limit: 128m
+    cpus: "0.5"
+
+    # ── Security hardening ─────────────────────────────────────────────────────
+    read_only: true
+    tmpfs:
+      - /tmp:size=32m,mode=1777,exec
+
+    cap_drop:
+      - ALL
+
+    security_opt:
+      - no-new-privileges:true
+
+    ipc: private
+
+    environment:
+      - NODE_ENV=production
