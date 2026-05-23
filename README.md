@@ -8,6 +8,12 @@ A minimal, hardened Node.js service that compiles and runs C++ code on demand.
 docker compose up --build
 ```
 
+OR
+
+```bash
+docker compose down && docker compose up --build
+```
+
 The service listens on **port 2000** and exposes a single endpoint: `POST /execute`.
 
 ---
