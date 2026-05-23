@@ -50,7 +50,7 @@ function runCommand(cmd, options = {}) {
       },
       (error, stdout, stderr) => {
         resolve({ error, stdout, stderr, code: error?.code ?? 0 });
-      }
+      },
     );
   });
 }
@@ -98,19 +98,24 @@ async function handleExecute(req, res) {
     const compileStart = Date.now();
     const compile = await runCommand(
       `g++ -O2 -std=c++23 -Wall -Wextra -o "${binFile}" "${srcFile}" 2>&1`,
-      { timeout: COMPILE_TIMEOUT_MS }
+      { timeout: COMPILE_TIMEOUT_MS },
     );
     const compileMs = Date.now() - compileStart;
 
     if (compile.error || !fs.existsSync(binFile)) {
       const compileOutput = (compile.stdout + compile.stderr).trim();
-      return sendJSON(res, 422, compileOutput);
+      return sendJSON(res, 422, {
+        compile: {
+          stdout: compile.stdout.slice(0, 65536),
+          stderr: compile.stderr.slice(0, 65536),
+        },
+      });
     }
 
     const execStart = Date.now();
     const run = await runCommand(
       `bash -c "ulimit -v 131072 -t 8 -f 512; \\"${binFile}\\""`,
-      { timeout: EXECUTION_TIMEOUT_MS }
+      { timeout: EXECUTION_TIMEOUT_MS },
     );
     const execMs = Date.now() - execStart;
 
@@ -118,11 +123,21 @@ async function handleExecute(req, res) {
     const stderr = run.stderr;
     const exitCode = run.error?.code ?? 0;
     const timedOut =
-      run.error?.killed || run.error?.signal === "SIGTERM" || execMs >= EXECUTION_TIMEOUT_MS - 100;
+      run.error?.killed ||
+      run.error?.signal === "SIGTERM" ||
+      execMs >= EXECUTION_TIMEOUT_MS - 100;
 
-    return sendJSON(res, 200, stdout.slice(0, 65536));
+    return sendJSON(res, 200, {
+      run: {
+        stdout: stdout.slice(0, 65536),
+        stderr: stderr.slice(0, 65536),
+      },
+    });
   } catch (e) {
-    return sendJSON(res, 500, { error: "Internal server error", detail: e.message });
+    return sendJSON(res, 500, {
+      error: "Internal server error",
+      detail: e.message,
+    });
   } finally {
     try {
       fs.rmSync(tmpDir, { recursive: true, force: true });
