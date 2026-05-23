@@ -6,7 +6,7 @@ services:
     restart: unless-stopped
 
     # ── Resource limits ────────────────────────────────────────────────────────
-    mem_limit: 128m
+    mem_limit: 256m
     cpus: "0.5"
 
     # ── Security hardening ─────────────────────────────────────────────────────
