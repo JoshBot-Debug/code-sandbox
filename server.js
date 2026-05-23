@@ -7,8 +7,8 @@ const os = require("os");
 
 const PORT = 2000;
 const MAX_BODY_SIZE = 64 * 1024;
-const EXECUTION_TIMEOUT_MS = 10_000;
-const COMPILE_TIMEOUT_MS = 15_000;
+const EXECUTION_TIMEOUT_MS = 1_000 * 30;
+const COMPILE_TIMEOUT_MS = 1_000 * 30;
 
 function sendJSON(res, status, obj) {
   const body = JSON.stringify(obj);
