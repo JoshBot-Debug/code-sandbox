@@ -7,8 +7,8 @@ const os = require("os");
 
 const PORT = 2000;
 const MAX_BODY_SIZE = 64 * 1024;
-const EXECUTION_TIMEOUT_MS = 1_000 * 30;
-const COMPILE_TIMEOUT_MS = 1_000 * 30;
+const EXECUTION_TIMEOUT_MS = 1_000 * 15;
+const COMPILE_TIMEOUT_MS = 1_000 * 15;
 
 function sendJSON(res, status, obj) {
   const body = JSON.stringify(obj);
@@ -146,6 +146,19 @@ async function handleExecute(req, res) {
 }
 
 const server = http.createServer(async (req, res) => {
+  
+  if(process.env.NODE_ENV != "production")
+  {
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  
+    if (req.method === "OPTIONS") {
+      res.writeHead(204);
+      return res.end();
+    }
+  }
+
   const url = new URL(req.url, `http://localhost:${PORT}`);
 
   if (url.pathname === "/execute") {

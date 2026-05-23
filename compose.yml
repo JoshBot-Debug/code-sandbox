@@ -7,7 +7,6 @@ services:
 
     # ── Resource limits ────────────────────────────────────────────────────────
     mem_limit: 128m
-    memswap_limit: 128m
     cpus: "0.5"
 
     # ── Security hardening ─────────────────────────────────────────────────────
