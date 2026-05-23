@@ -7,7 +7,7 @@ services:
 
     # ── Resource limits ────────────────────────────────────────────────────────
     mem_limit: 256m
-    cpus: "0.5"
+    cpus: "1"
 
     # ── Security hardening ─────────────────────────────────────────────────────
     read_only: true
